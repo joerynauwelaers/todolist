@@ -1,0 +1,38 @@
+version: '2'
+services:
+  todolist:
+    image: joerynauwelaers/todolist:latest
+    container_name: todolist.development
+    labels:
+      service.type: service
+    networks:
+      - joery
+    environment:
+      - "MONGO_URL=mongodb.development"
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo
+    container_name: mongodb.development
+    labels:
+      service.type: storage
+    volumes:
+      - '~/container-data/mongo:/data/db'
+    networks:
+      - joery
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins.development
+    labels:
+      service.type: deployment
+    ports:
+      - '80:8080'
+      - '443:8443'
+      - '50000:50000'
+    volumes:
+      - '~/container-data/jenkins:/var/jenkins_home'
+networks:
+  joery:
+    driver: bridge
